@@ -29040,7 +29040,7 @@ for(;;)switch(s){case 0:f=A.b([],t.H7)
 for(p=a.length,o=t.N,n=t.T,m=t.U7,l=t.z,k=0;k<a.length;a.length===p||(0,A.H)(a),++k){j=a[k]
 i=j.i(0,"role")==="model"?"model":"user"
 f.push(A.aa(["role",i,"parts",A.b([A.aa(["text",j.i(0,"text")],o,n)],m)],o,l))}s=3
-return A.o($.aXG().a4x("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyAnKZFk2ucgLseamLUuOV_rjgViiVQzapA",B.a7.xf(A.aa(["contents",f],o,t.fw),null),A.aLT(A.aa(["Content-Type","application/json"],o,l)),l),$async$wg)
+return A.o($.aXG().a4x("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyC8xYw61_uXLMKDD2OUWMNX04zFg0Caxuo",B.a7.xf(A.aa(["contents",f],o,t.fw),null),A.aLT(A.aa(["Content-Type","application/json"],o,l)),l),$async$wg)
 case 3:h=c.a
 g=t.kc.a(J.cW(typeof h=="string"?B.a7.x5(h,null):h,"candidates"))
 if(g==null||J.h1(g)){q="\uc751\ub2f5\uc744 \uc0dd\uc131\ud558\uc9c0 \ubabb\ud588\uc5b4\uc694."
