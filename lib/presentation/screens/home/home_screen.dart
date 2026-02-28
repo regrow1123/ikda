@@ -19,7 +19,7 @@ class HomeScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('읽다', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text('ikda(읽다)', style: TextStyle(fontWeight: FontWeight.bold)),
       ),
       body: RefreshIndicator(
         onRefresh: () async {
@@ -30,8 +30,8 @@ class HomeScreen extends ConsumerWidget {
           children: [
             // 맞춤 추천 배너
             _recommendationBanner(context, recommended, reasons),
-            _asyncSection(context, '🔥 베스트셀러', bestsellers),
-            _asyncSection(context, '📖 신간', newBooks),
+            _asyncSection(context, '베스트셀러', bestsellers),
+            _asyncSection(context, '신간', newBooks),
           ],
         ),
       ),
