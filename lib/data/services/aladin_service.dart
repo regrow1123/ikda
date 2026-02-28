@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:dio/dio.dart';
 import '../models/book.dart';
 import '../../core/constants/supabase_constants.dart';
@@ -5,7 +6,7 @@ import '../../core/constants/supabase_constants.dart';
 class AladinService {
   // Supabase Edge Function proxy (CORS-safe)
   static final _proxyBase = '${SupabaseConstants.url}/functions/v1/aladin-proxy';
-  static final _dio = Dio();
+  static final _dio = Dio(BaseOptions(responseType: ResponseType.plain));
 
   /// 책 검색
   static Future<List<Book>> search(String query, {int page = 1}) async {
@@ -65,10 +66,15 @@ class AladinService {
   static List<Book> _parseItems(dynamic data) {
     if (data == null) return [];
 
-    // Dio가 JSON을 자동 파싱하는 경우
     final Map<String, dynamic> json;
     if (data is Map<String, dynamic>) {
       json = data;
+    } else if (data is String) {
+      try {
+        json = jsonDecode(data) as Map<String, dynamic>;
+      } catch (_) {
+        return [];
+      }
     } else {
       return [];
     }
