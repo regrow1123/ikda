@@ -1,7 +1,10 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../data/models/highlight.dart';
+import '../../../data/services/gemini_service.dart';
+import '../../../data/services/sd_service.dart';
 import '../../../providers/highlight_provider.dart';
 import 'reflection_chat_screen.dart';
 
@@ -32,6 +35,9 @@ class _HighlightAddScreenState extends ConsumerState<HighlightAddScreen> {
   final _moods = ['감동', '영감', '공감', '슬픔', '따뜻함', '재미', '놀라움', '위로'];
   List<Map<String, dynamic>>? _llmConversation;
   String? _llmSummary;
+  String? _illustrationBase64;
+  String? _illustrationPrompt;
+  bool _isGeneratingImage = false;
 
   @override
   void dispose() {
@@ -39,6 +45,42 @@ class _HighlightAddScreenState extends ConsumerState<HighlightAddScreen> {
     _noteController.dispose();
     _pageController.dispose();
     super.dispose();
+  }
+
+  Future<void> _generateIllustration() async {
+    if (_quoteController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('먼저 문구를 입력해주세요')),
+      );
+      return;
+    }
+
+    setState(() => _isGeneratingImage = true);
+
+    try {
+      // 1. Gemini로 SD 프롬프트 생성
+      final prompt = await GeminiService.generateImagePrompt(
+        quote: _quoteController.text.trim(),
+        summary: _llmSummary,
+        mood: _selectedMood,
+      );
+
+      // 2. SD로 이미지 생성
+      final base64Image = await SdService.generateIllustration(prompt: prompt);
+
+      setState(() {
+        _illustrationBase64 = base64Image;
+        _illustrationPrompt = prompt;
+        _isGeneratingImage = false;
+      });
+    } catch (e) {
+      setState(() => _isGeneratingImage = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('일러스트 생성 실패: $e')),
+        );
+      }
+    }
   }
 
   void _save() {
@@ -58,6 +100,8 @@ class _HighlightAddScreenState extends ConsumerState<HighlightAddScreen> {
       mood: _selectedMood,
       llmConversation: _llmConversation ?? [],
       llmSummary: _llmSummary,
+      illustrationUrl: _illustrationBase64 != null ? 'data:image/png;base64,$_illustrationBase64' : null,
+      illustrationPrompt: _illustrationPrompt,
       bookTitle: widget.bookTitle,
       bookAuthor: widget.bookAuthor,
       bookCoverUrl: widget.bookCoverUrl,
@@ -252,6 +296,45 @@ class _HighlightAddScreenState extends ConsumerState<HighlightAddScreen> {
                 },
                 icon: Icon(_llmSummary != null ? Icons.refresh : Icons.auto_awesome),
                 label: Text(_llmSummary != null ? 'AI 성찰 다시하기' : 'AI와 함께 성찰하기'),
+              ),
+            ),
+
+            const SizedBox(height: 12),
+
+            // 일러스트 미리보기
+            if (_illustrationBase64 != null) ...[
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.memory(
+                  base64Decode(_illustrationBase64!),
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              const SizedBox(height: 8),
+              if (_illustrationPrompt != null)
+                Text(
+                  _illustrationPrompt!,
+                  style: theme.textTheme.labelSmall?.copyWith(color: theme.colorScheme.outline),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              const SizedBox(height: 12),
+            ],
+
+            // 일러스트 생성 버튼
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: _isGeneratingImage ? null : () => _generateIllustration(),
+                icon: _isGeneratingImage
+                    ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                    : Icon(_illustrationBase64 != null ? Icons.refresh : Icons.palette),
+                label: Text(_isGeneratingImage
+                    ? '일러스트 생성 중...'
+                    : _illustrationBase64 != null
+                        ? '일러스트 다시 생성'
+                        : '일러스트 생성하기'),
               ),
             ),
           ],
