@@ -1,60 +1,62 @@
 import 'package:dio/dio.dart';
 import '../models/book.dart';
-import '../../core/constants/app_constants.dart';
+import '../../core/constants/supabase_constants.dart';
 
 class AladinService {
-  static final _dio = Dio(BaseOptions(
-    baseUrl: AppConstants.aladinBaseUrl,
-    queryParameters: {
-      'ttbkey': AppConstants.aladinTtbKey,
-      'Output': 'JS',
-      'Version': '20131101',
-      'Cover': 'Big',
-    },
-  ));
+  // Supabase Edge Function proxy (CORS-safe)
+  static final _proxyBase = '${SupabaseConstants.url}/functions/v1/aladin-proxy';
+  static final _dio = Dio();
 
   /// 책 검색
   static Future<List<Book>> search(String query, {int page = 1}) async {
-    final res = await _dio.get('/ItemSearch.aspx', queryParameters: {
+    final res = await _dio.get(_proxyBase, queryParameters: {
+      'endpoint': 'ItemSearch.aspx',
       'Query': query,
       'QueryType': 'Keyword',
       'MaxResults': 20,
       'Start': page,
       'SearchTarget': 'Book',
+      'Cover': 'Big',
     });
     return _parseItems(res.data);
   }
 
   /// 베스트셀러
   static Future<List<Book>> bestsellers({String categoryId = '0'}) async {
-    final res = await _dio.get('/ItemList.aspx', queryParameters: {
+    final res = await _dio.get(_proxyBase, queryParameters: {
+      'endpoint': 'ItemList.aspx',
       'QueryType': 'Bestseller',
       'MaxResults': 20,
       'Start': 1,
       'SearchTarget': 'Book',
       'CategoryId': categoryId,
+      'Cover': 'Big',
     });
     return _parseItems(res.data);
   }
 
   /// 신간
   static Future<List<Book>> newBooks({String categoryId = '0'}) async {
-    final res = await _dio.get('/ItemList.aspx', queryParameters: {
+    final res = await _dio.get(_proxyBase, queryParameters: {
+      'endpoint': 'ItemList.aspx',
       'QueryType': 'ItemNewAll',
       'MaxResults': 20,
       'Start': 1,
       'SearchTarget': 'Book',
       'CategoryId': categoryId,
+      'Cover': 'Big',
     });
     return _parseItems(res.data);
   }
 
   /// 책 상세
   static Future<Book?> getDetail(String isbn13) async {
-    final res = await _dio.get('/ItemLookUp.aspx', queryParameters: {
+    final res = await _dio.get(_proxyBase, queryParameters: {
+      'endpoint': 'ItemLookUp.aspx',
       'ItemId': isbn13,
       'ItemIdType': 'ISBN13',
       'OptResult': 'authors,fulldescription,Toc',
+      'Cover': 'Big',
     });
     final items = _parseItems(res.data);
     return items.isNotEmpty ? items.first : null;
