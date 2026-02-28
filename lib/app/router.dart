@@ -3,10 +3,11 @@ import '../presentation/screens/auth/login_screen.dart';
 import '../presentation/screens/home/home_screen.dart';
 import '../presentation/screens/search/search_screen.dart';
 import '../presentation/screens/my_bookshelf/bookshelf_screen.dart';
-import '../presentation/screens/feed/feed_screen.dart';
 import '../presentation/screens/profile/profile_screen.dart';
 import '../presentation/screens/book_detail/book_detail_screen.dart';
 import '../presentation/screens/recommendation/recommendation_screen.dart';
+import '../presentation/screens/highlight/highlight_list_screen.dart';
+import '../presentation/screens/highlight/highlight_add_screen.dart';
 import 'shell_screen.dart';
 
 final router = GoRouter(
@@ -32,14 +33,18 @@ final router = GoRouter(
           builder: (context, state) => const BookshelfScreen(),
         ),
         GoRoute(
-          path: '/feed',
-          builder: (context, state) => const FeedScreen(),
+          path: '/highlights',
+          builder: (context, state) => const HighlightListScreen(),
         ),
         GoRoute(
           path: '/profile',
           builder: (context, state) => const ProfileScreen(),
         ),
       ],
+    ),
+    GoRoute(
+      path: '/highlight/add',
+      builder: (context, state) => const HighlightAddScreen(),
     ),
     GoRoute(
       path: '/recommendations',

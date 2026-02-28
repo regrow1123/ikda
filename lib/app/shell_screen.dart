@@ -11,7 +11,7 @@ class ShellScreen extends StatelessWidget {
     if (location.startsWith('/home')) return 0;
     if (location.startsWith('/search')) return 1;
     if (location.startsWith('/bookshelf')) return 2;
-    if (location.startsWith('/feed')) return 3;
+    if (location.startsWith('/highlights')) return 3;
     if (location.startsWith('/profile')) return 4;
     return 0;
   }
@@ -36,7 +36,7 @@ class ShellScreen extends StatelessWidget {
             case 2:
               context.go('/bookshelf');
             case 3:
-              context.go('/feed');
+              context.go('/highlights');
             case 4:
               context.go('/profile');
           }
@@ -58,9 +58,9 @@ class ShellScreen extends StatelessWidget {
             label: '책장',
           ),
           NavigationDestination(
-            icon: Icon(Icons.people_outlined),
-            selectedIcon: Icon(Icons.people),
-            label: '피드',
+            icon: Icon(Icons.bookmark_border),
+            selectedIcon: Icon(Icons.bookmark),
+            label: '스크랩',
           ),
           NavigationDestination(
             icon: Icon(Icons.person_outlined),

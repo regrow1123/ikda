@@ -1,4 +1,5 @@
 import '../models/book.dart';
+import '../models/highlight.dart';
 import '../models/review.dart';
 import '../models/user_book.dart';
 import '../models/profile.dart';
@@ -83,4 +84,41 @@ class MockDataService {
     userBooks.where((ub) => ub.status == status).toList();
 
   static Profile get currentUser => profiles.first;
+
+  static final List<Highlight> highlights = [
+    Highlight(
+      id: 1,
+      userId: 'user1',
+      bookId: 1,
+      quote: '감정을 느끼지 못한다는 건, 감정이 없다는 게 아니라 감정의 언어를 모른다는 뜻이었다.',
+      myNote: '나도 가끔 내 감정을 설명하지 못할 때가 있다.',
+      mood: '공감',
+      bookTitle: '아몬드',
+      bookCoverUrl: 'https://picsum.photos/seed/book1/200/300',
+      bookAuthor: '손원평',
+      llmSummary: '감정 표현의 어려움과 자기 이해에 대한 성찰',
+    ),
+    Highlight(
+      id: 2,
+      userId: 'user1',
+      bookId: 5,
+      quote: '우주는 우리에게 아무것도 빚진 게 없다. 그저 우리가 우주에 경이를 느낄 뿐이다.',
+      myNote: '칼 세이건의 겸손함이 느껴지는 문장.',
+      mood: '영감',
+      bookTitle: '코스모스',
+      bookCoverUrl: 'https://picsum.photos/seed/book5/200/300',
+      bookAuthor: '칼 세이건',
+      llmSummary: '우주 앞에서의 겸손과 경이로움',
+    ),
+    Highlight(
+      id: 3,
+      userId: 'user1',
+      bookId: 3,
+      quote: '꿈이란 건 결국 깨어 있는 동안의 기억과 감정이 만들어내는 거잖아요.',
+      mood: '따뜻함',
+      bookTitle: '달러구트 꿈 백화점',
+      bookCoverUrl: 'https://picsum.photos/seed/book3/200/300',
+      bookAuthor: '이미예',
+    ),
+  ];
 }
