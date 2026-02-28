@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../data/models/highlight.dart';
 import '../../../providers/highlight_provider.dart';
+import 'reflection_chat_screen.dart';
 
 class HighlightAddScreen extends ConsumerStatefulWidget {
   final int? bookId;
@@ -29,6 +30,8 @@ class _HighlightAddScreenState extends ConsumerState<HighlightAddScreen> {
   String? _selectedMood;
 
   final _moods = ['감동', '영감', '공감', '슬픔', '따뜻함', '재미', '놀라움', '위로'];
+  List<Map<String, dynamic>>? _llmConversation;
+  String? _llmSummary;
 
   @override
   void dispose() {
@@ -53,6 +56,8 @@ class _HighlightAddScreenState extends ConsumerState<HighlightAddScreen> {
       myNote: _noteController.text.trim().isEmpty ? null : _noteController.text.trim(),
       pageNumber: int.tryParse(_pageController.text),
       mood: _selectedMood,
+      llmConversation: _llmConversation ?? [],
+      llmSummary: _llmSummary,
       bookTitle: widget.bookTitle,
       bookAuthor: widget.bookAuthor,
       bookCoverUrl: widget.bookCoverUrl,
@@ -189,17 +194,64 @@ class _HighlightAddScreenState extends ConsumerState<HighlightAddScreen> {
 
             const SizedBox(height: 32),
 
-            // AI 성찰 버튼 (향후 구현)
+            // AI 성찰 요약 표시
+            if (_llmSummary != null) ...[
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.tertiaryContainer.withValues(alpha: 0.3),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.auto_awesome, size: 16, color: theme.colorScheme.tertiary),
+                        const SizedBox(width: 6),
+                        Text('AI 성찰 요약', style: theme.textTheme.labelMedium?.copyWith(color: theme.colorScheme.tertiary)),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Text(_llmSummary!, style: theme.textTheme.bodySmall?.copyWith(height: 1.5)),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+            ],
+
+            // AI 성찰 버튼
             SizedBox(
               width: double.infinity,
               child: OutlinedButton.icon(
                 onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('AI 성찰 기능은 곧 추가됩니다!')),
+                  if (_quoteController.text.trim().isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('먼저 문구를 입력해주세요')),
+                    );
+                    return;
+                  }
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => ReflectionChatScreen(
+                        quote: _quoteController.text.trim(),
+                        bookTitle: widget.bookTitle ?? '알 수 없는 책',
+                        bookAuthor: widget.bookAuthor ?? '',
+                        userNote: _noteController.text.trim().isEmpty ? null : _noteController.text.trim(),
+                        mood: _selectedMood,
+                        onComplete: (conversation, summary) {
+                          setState(() {
+                            _llmConversation = conversation;
+                            _llmSummary = summary;
+                          });
+                        },
+                      ),
+                    ),
                   );
                 },
-                icon: const Icon(Icons.auto_awesome),
-                label: const Text('AI와 함께 성찰하기'),
+                icon: Icon(_llmSummary != null ? Icons.refresh : Icons.auto_awesome),
+                label: Text(_llmSummary != null ? 'AI 성찰 다시하기' : 'AI와 함께 성찰하기'),
               ),
             ),
           ],
