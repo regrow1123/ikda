@@ -8,6 +8,7 @@ import '../presentation/screens/book_detail/book_detail_screen.dart';
 import '../presentation/screens/recommendation/recommendation_screen.dart';
 import '../presentation/screens/highlight/highlight_list_screen.dart';
 import '../presentation/screens/highlight/highlight_add_screen.dart';
+import '../presentation/screens/highlight/highlight_detail_screen.dart';
 import 'shell_screen.dart';
 
 final router = GoRouter(
@@ -45,6 +46,13 @@ final router = GoRouter(
     GoRoute(
       path: '/highlight/add',
       builder: (context, state) => const HighlightAddScreen(),
+    ),
+    GoRoute(
+      path: '/highlight/:id',
+      builder: (context, state) {
+        final id = int.parse(state.pathParameters['id']!);
+        return HighlightDetailScreen(highlightId: id);
+      },
     ),
     GoRoute(
       path: '/recommendations',
