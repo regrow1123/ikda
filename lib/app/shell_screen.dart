@@ -19,7 +19,12 @@ class ShellScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: child,
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 600),
+          child: child,
+        ),
+      ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _currentIndex(context),
         onDestinationSelected: (index) {

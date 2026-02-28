@@ -58,17 +58,22 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
               : results.when(
                   data: (books) => books.isEmpty
                     ? const Center(child: Text('검색 결과가 없어요'))
-                    : GridView.builder(
+                    : LayoutBuilder(
+                      builder: (context, constraints) {
+                        final cols = (constraints.maxWidth / 160).floor().clamp(2, 6);
+                        return GridView.builder(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: cols,
                           childAspectRatio: 0.48,
                           crossAxisSpacing: 12,
                           mainAxisSpacing: 12,
                         ),
                         itemCount: books.length,
                         itemBuilder: (_, i) => BookCard(book: books[i]),
-                      ),
+                      );
+                      },
+                    ),
                   loading: () => const Center(child: CircularProgressIndicator()),
                   error: (e, _) => Center(child: Text('검색 실패: $e')),
                 ),
