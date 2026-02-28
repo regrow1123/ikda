@@ -6,6 +6,7 @@ import '../presentation/screens/my_bookshelf/bookshelf_screen.dart';
 import '../presentation/screens/feed/feed_screen.dart';
 import '../presentation/screens/profile/profile_screen.dart';
 import '../presentation/screens/book_detail/book_detail_screen.dart';
+import '../presentation/screens/recommendation/recommendation_screen.dart';
 import 'shell_screen.dart';
 
 final router = GoRouter(
@@ -39,6 +40,10 @@ final router = GoRouter(
           builder: (context, state) => const ProfileScreen(),
         ),
       ],
+    ),
+    GoRoute(
+      path: '/recommendations',
+      builder: (context, state) => const RecommendationScreen(),
     ),
     GoRoute(
       path: '/book/:id',
