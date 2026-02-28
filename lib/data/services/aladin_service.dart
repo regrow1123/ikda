@@ -6,7 +6,11 @@ import '../../core/constants/supabase_constants.dart';
 class AladinService {
   // Supabase Edge Function proxy (CORS-safe)
   static final _proxyBase = '${SupabaseConstants.url}/functions/v1/aladin-proxy';
-  static final _dio = Dio(BaseOptions(responseType: ResponseType.plain));
+  static final _dio = Dio(BaseOptions(
+    responseType: ResponseType.plain,
+    connectTimeout: const Duration(seconds: 10),
+    receiveTimeout: const Duration(seconds: 10),
+  ));
 
   /// 책 검색
   static Future<List<Book>> search(String query, {int page = 1}) async {
