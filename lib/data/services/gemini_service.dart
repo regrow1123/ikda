@@ -90,16 +90,35 @@ $conversationText
     required String? summary,
     required String? mood,
   }) async {
-    final prompt = '''Generate a Stable Diffusion image prompt for this book quote illustration.
+    final moodMap = {
+      '감동': 'warm golden light, tender, heartfelt',
+      '슬픔': 'melancholic blue tones, rain, lonely atmosphere',
+      '기쁨': 'bright warm colors, sunlight, cheerful',
+      '분노': 'dramatic red tones, stormy, intense',
+      '평온': 'serene pastel tones, calm water, gentle breeze',
+      '공포': 'dark shadows, eerie fog, mysterious',
+      '희망': 'dawn light, soft rays breaking through clouds',
+      '사랑': 'soft pink and warm tones, flowers, gentle light',
+    };
+    final moodTags = mood != null ? (moodMap[mood] ?? 'emotional, atmospheric') : 'emotional, atmospheric';
+
+    final prompt = '''You are an expert Stable Diffusion prompt engineer. Create a prompt for an artistic book quote illustration.
 
 Quote: "$quote"
-${summary != null ? 'Reflection summary: "$summary"' : ''}
-${mood != null ? 'Mood: $mood' : ''}
+${summary != null ? 'Context: "$summary"' : ''}
+Mood keywords: $moodTags
 
-Create a beautiful, artistic, watercolor-style illustration prompt in English.
-The prompt should capture the emotional essence of the quote.
-Output ONLY the prompt, nothing else. Keep it under 100 words.
-Do not include any negative prompt.''';
+RULES:
+1. Output ONLY the prompt tags, comma-separated. No sentences, no explanation.
+2. Start with the main subject/scene, then style tags, then quality tags.
+3. Use these quality boosters at the end: masterpiece, best quality, highly detailed, 8k
+4. Style should be: watercolor painting, soft illustration, book art style
+5. Focus on symbolic/metaphorical imagery, NOT literal text rendering
+6. Keep under 75 tokens (SD 1.5 limit)
+7. Do NOT include negative prompt, do NOT include quotes or book text
+
+Example format:
+a lone figure standing at ocean shore watching sunset, watercolor painting, soft illustration, warm golden light, ethereal atmosphere, masterpiece, best quality, highly detailed''';
 
     return _chat([{'role': 'user', 'text': prompt}]);
   }

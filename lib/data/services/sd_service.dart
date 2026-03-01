@@ -29,12 +29,13 @@ class SdService {
       data: jsonEncode({
         'prompt': prompt,
         'negative_prompt': negativePrompt ??
-            'ugly, blurry, low quality, deformed, text, watermark, signature, worst quality',
+            'ugly, blurry, low quality, deformed, text, watermark, signature, worst quality, bad anatomy, bad hands, extra fingers, missing fingers, extra limbs, disfigured, out of frame, duplicate, morbid, mutilated, poorly drawn face, mutation, extra digits, cropped, jpeg artifacts, lowres, normal quality',
         'steps': steps,
         'width': width,
         'height': height,
         'cfg_scale': cfgScale,
-        'sampler_name': 'Euler a',
+        'sampler_name': 'DPM++ 2M Karras',
+        'seed': -1,
       }),
       options: Options(headers: {'Content-Type': 'application/json'}),
     );
