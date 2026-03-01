@@ -2,8 +2,11 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 
 class SdService {
-  // 로컬 SD Forge API
-  static const _baseUrl = 'http://192.168.0.30:7860';
+  // SD Forge API URL (dart-define으로 주입, 기본값 로컬)
+  static const _baseUrl = String.fromEnvironment(
+    'SD_API_URL',
+    defaultValue: 'http://192.168.0.30:7860',
+  );
 
   static final _dio = Dio(BaseOptions(
     baseUrl: _baseUrl,
