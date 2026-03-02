@@ -56,6 +56,8 @@ class HighlightListNotifier extends StateNotifier<List<Highlight>> {
       );
       state = [saved, ...state];
     } catch (e) {
+      // ignore: avoid_print
+      print('⚠️ Highlight insert 실패: $e');
       // DB 실패 시 로컬에만 추가
       final newH = Highlight(
         id: DateTime.now().millisecondsSinceEpoch,
@@ -97,11 +99,7 @@ class HighlightListNotifier extends StateNotifier<List<Highlight>> {
   }
 
   Future<void> _ensureDummyProfile() async {
-    try {
-      await _supabase.from('profiles').upsert({
-        'id': _dummyUserId,
-        'display_name': '테스트 유저',
-      }, onConflict: 'id');
-    } catch (_) {}
+    // 더미 프로필은 DB에 직접 생성됨 (auth.users FK 제약)
+    // 여기서는 아무것도 안 함
   }
 }
